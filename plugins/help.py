@@ -41,6 +41,11 @@ def help_command(text, chan, conn, bot, notice, message, has_permission):
         commands = []
 
         for plugin in sorted(set(bot.plugin_manager.commands.values()), key=attrgetter("name")):
+            # check for disabled commands
+            if plugin.name in conn.config["disabled_commands"]:
+                # if the plugin is disabled skip it
+                continue
+
             # use set to remove duplicate commands (from multiple aliases), and sorted to sort by name
 
             if plugin.permissions:
@@ -68,5 +73,5 @@ def help_command(text, chan, conn, bot, notice, message, has_permission):
                 notice(line)
             else:
                 #This is an user in this case.
-                message(line)
+                notice(line)
         notice("For detailed help, use {}help <command>, without the brackets.".format(conn.config["command_prefix"]))
